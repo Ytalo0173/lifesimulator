@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LifeStory - Simulador de Vida</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        background: #101522;
+        color: #fff;
+        min-height: 100vh;
+    }
+
+    .container {
+        width: min(100%, 1000px);
+        margin: auto;
+        padding: 20px;
+    }
+
+    header {
+        background: linear-gradient(135deg, #6c5ce7, #4834d4);
+        padding: 25px;
+        border-radius: 18px;
+        margin-bottom: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,.3);
+    }
+
+    header h1 {
+        font-size: 32px;
+        margin-bottom: 8px;
+    }
+
+    header p {
+        color: #ddd;
+    }
+
+    .start-screen {
+        text-align: center;
+        background: #191f2e;
+        padding: 45px 25px;
+        border-radius: 18px;
+    }
+
+    .start-screen h2 {
+        font-size: 30px;
+        margin-bottom: 15px;
+    }
+
+    button {
+        border: none;
+        border-radius: 10px;
+        padding: 13px 18px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: .2s;
+    }
+
+    button:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.1);
+    }
+
+    .primary {
+        background: #00b894;
+        color: white;
+    }
+
+    .danger {
+        background: #d63031;
+        color: white;
+    }
+
+    .blue {
+        background: #0984e3;
+        color: white;
+    }
+
+    .purple {
+        background: #6c5ce7;
+        color: white;
+    }
+
+    .game {
+        display: none;
+    }
+
+    .profile {
+        background: #191f2e;
+        border-radius: 18px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .profile-top {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        margin-bottom: 20px;
+    }
+
+    .avatar {
+        width: 75px;
+        height: 75px;
+        border-radius: 50%;
+        background: #2d3436;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 40px;
+    }
+
+    .profile h2 {
+        margin-bottom: 6px;
+    }
+
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+    }
+
+    .stat {
+        background: #222a3b;
+        padding: 15px;
+        border-radius: 12px;
+    }
+
+    .stat-title {
+        color: #aaa;
+        font-size: 12px;
+        margin-bottom: 8px;
+    }
+
+    .stat-value {
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .green {
+        color: #00cec9;
+    }
+
+    .red {
+        color: #ff7675;
+    }
+
+    .yellow {
+        color: #ffeaa7;
+    }
+
+    .blue-text {
+        color: #74b9ff;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 20px;
+    }
+
+    .card {
+        background: #191f2e;
+        border-radius: 18px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .card h3 {
+        margin-bottom: 15px;
+    }
+
+    .event-log {
+        height: 340px;
+        overflow-y: auto;
+    }
+
+    .event {
+        background: #222a3b;
+        padding: 13px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        line-height: 1.5;
+    }
+
+    .event strong {
+        color: #81ecec;
+    }
+
+    .actions {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .actions button {
+        width: 100%;
+    }
+
+    .progress {
+        height: 8px;
+        background: #30394d;
+        border-radius: 20px;
+        overflow: hidden;
+        margin-top: 8px;
+    }
+
+    .progress-bar {
+        height: 100%;
+        border-radius: 20px;
+        transition: width .4s;
+    }
+
+    .money {
+        font-size: 25px;
+        font-weight: bold;
+        color: #55efc4;
+    }
+
+    .career {
+        color: #74b9ff;
+    }
+
+    .modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,.75);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        z-index: 10;
+    }
+
+    .modal-content {
+        width: min(500px, 100%);
+        background: #191f2e;
+        padding: 25px;
+        border-radius: 18px;
+    }
+
+    .modal-content h2 {
+        margin-bottom: 12px;
+    }
+
+    .modal-content input,
+    .modal-content select {
+        width: 100%;
+        padding: 13px;
+        margin: 8px 0 15px;
+        border: none;
+        border-radius: 8px;
+        background: #252d40;
+        color: white;
+    }
+
+    .modal-buttons {
+        display: flex;
+        gap: 10px;
+    }
+
+    @media(max-width: 700px) {
+        .stats {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .grid {
+            grid-template-columns: 1fr;
+        }
+
+        .actions {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <header>
+        <h1>🌎 LifeStory</h1>
+        <p>Viva sua vida. Faça escolhas. Descubra seu destino.</p>
+    </header>
+
+    <!-- TELA INICIAL -->
+    <div class="start-screen" id="startScreen">
+        <h2>Comece uma nova vida</h2>
+        <p style="color:#aaa; margin-bottom:25px;">
+            Crie um personagem e veja onde suas escolhas vão levar você.
+        </p>
+
+        <button class="primary" onclick="openCreateModal()">
+            ✨ Criar personagem
+        </button>
+
+        <br><br>
+
+        <button class="blue" onclick="loadGame()">
+            💾 Carregar jogo
+        </button>
+    </div>
+
+    <!-- JOGO -->
+    <div class="game" id="game">
+
+        <section class="profile">
+
+            <div class="profile-top">
+                <div class="avatar" id="avatar">👶</div>
+
+                <div>
+                    <h2 id="name">Nome</h2>
+                    <p id="description">0 anos • Brasil</p>
+                    <p class="career" id="career">Estudante</p>
+                </div>
+            </div>
+
+            <div class="stats">
+
+                <div class="stat">
+                    <div class="stat-title">IDADE</div>
+                    <div class="stat-value" id="age">0</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-title">SAÚDE</div>
+                    <div class="stat-value green" id="health">100%</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-title">FELICIDADE</div>
+                    <div class="stat-value yellow" id="happiness">80%</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-title">INTELIGÊNCIA</div>
+                    <div class="stat-value blue-text" id="smarts">50%</div>
+                </div>
+
+            </div>
+        </section>
+
+        <div class="grid">
+
+            <main>
+
+                <section class="card">
+                    <h3>📖 Acontecimentos</h3>
+
+                    <div class="event-log" id="eventLog"></div>
+                </section>
+
+                <section class="card">
+                    <h3>⚡ Ações</h3>
+
+                    <div class="actions">
+
+                        <button class="primary" onclick="ageUp()">
+                            🎂 Envelhecer
+                        </button>
+
+                        <button class="blue" onclick="study()">
+                            📚 Estudar
+                        </button>
+
+                        <button class="purple" onclick="work()">
+                            💼 Trabalhar
+                        </button>
+
+                        <button class="primary" onclick="exercise()">
+                            🏃 Exercitar
+                        </button>
+
+                        <button class="yellow" style="background:#fdcb6e;color:#222"
+                                onclick="relax()">
+                            🎮 Relaxar
+                        </button>
+
+                        <button class="blue" onclick="relationship()">
+                            ❤️ Relacionamento
+                        </button>
+
+                        <button class="danger" onclick="medical()">
+                            🏥 Médico
+                        </button>
+
+                        <button class="danger" onclick="newLife()">
+                            🔄 Nova vida
+                        </button>
+
+                    </div>
+                </section>
+
+            </main>
+
+            <aside>
+
+                <section class="card">
+
+                    <h3>💰 Finanças</h3>
+
+                    <div class="money" id="money">
+                        R$ 0
+                    </div>
+
+                    <p style="color:#aaa; margin-top:8px;">
+                        Patrimônio
+                    </p>
+
+                    <hr style="border-color:#30394d; margin:15px 0;">
+
+                    <p>Profissão</p>
+                    <strong id="job">Estudante</strong>
+
+                    <br><br>
+
+                    <p>Salário anual</p>
+                    <strong id="salary">R$ 0</strong>
+
+                </section>
+
+                <section class="card">
+
+                    <h3>📊 Atributos</h3>
+
+                    <p>Saúde</p>
+                    <div class="progress">
+                        <div class="progress-bar"
+                             id="healthBar"
+                             style="background:#00b894"></div>
+                    </div>
+
+                    <br>
+
+                    <p>Felicidade</p>
+                    <div class="progress">
+                        <div class="progress-bar"
+                             id="happyBar"
+                             style="background:#fdcb6e"></div>
+                    </div>
+
+                    <br>
+
+                    <p>Inteligência</p>
+                    <div class="progress">
+                        <div class="progress-bar"
+                             id="smartBar"
+                             style="background:#0984e3"></div>
+                    </div>
+
+                </section>
+
+            </aside>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- MODAL DE CRIAÇÃO -->
+
+<div class="modal" id="createModal">
+
+    <div class="modal-content">
+
+        <h2>👤 Criar personagem</h2>
+
+        <label>Nome</label>
+        <input id="nameInput" placeholder="Digite seu nome">
+
+        <label>País</label>
+
+        <select id="countryInput">
+            <option>Brasil</option>
+            <option>Portugal</option>
+            <option>Estados Unidos</option>
+            <option>Japão</option>
+            <option>Canadá</option>
+            <option>França</option>
+        </select>
+
+        <div class="modal-buttons">
+
+            <button class="primary" onclick="createCharacter()">
+                Começar
+            </button>
+
+            <button class="danger" onclick="closeModal()">
+                Cancelar
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+let player = {
+    name: "",
+    country: "",
+    age: 0,
+    health: 100,
+    happiness: 80,
+    smarts: 50,
+    money: 0,
+    job: "Estudante",
+    salary: 0,
+    alive: true
+};
+
+const jobs = [
+    {
+        name: "Entregador",
+        salary: 18000,
+        minAge: 18
+    },
+    {
+        name: "Professor",
+        salary: 48000,
+        minAge: 22
+    },
+    {
+        name: "Programador",
+        salary: 75000,
+        minAge: 20
+    },
+    {
+        name: "Médico",
+        salary: 150000,
+        minAge: 25
+    },
+    {
+        name: "Empresário",
+        salary: 200000,
+        minAge: 25
+    },
+    {
+        name: "Artista",
+        salary: 90000,
+        minAge: 18
+    }
+];
+
+function openCreateModal() {
+    document.getElementById("createModal").style.display = "flex";
+}
+
+function closeModal() {
+    document.getElementById("createModal").style.display = "none";
+}
+
+function createCharacter() {
+
+    const name = document.getElementById("nameInput").value.trim();
+
+    if (!name) {
+        alert("Digite um nome.");
+        return;
+    }
+
+    player.name = name;
+    player.country =
+        document.getElementById("countryInput").value;
+
+    player.age = 0;
+    player.health = random(70,100);
+    player.happiness = random(60,95);
+    player.smarts = random(30,80);
+    player.money = 0;
+    player.job = "Estudante";
+    player.salary = 0;
+    player.alive = true;
+
+    closeModal();
+
+    document.getElementById("startScreen").style.display = "none";
+    document.getElementById("game").style.display = "block";
+
+    document.getElementById("eventLog").innerHTML = "";
+
+    addEvent(
+        `Você nasceu em <strong>${player.country}</strong>. 
+        Seus pais escolheram o nome ${player.name}.`
+    );
+
+    update();
+    saveGame();
+}
+
+function ageUp() {
+
+    if (!player.alive) return;
+
+    player.age++;
+
+    if (player.salary > 0) {
+        player.money += player.salary;
+    }
+
+    // Pequenas mudanças naturais
+    player.happiness += random(-8, 6);
+    player.health += random(-6, 4);
+
+    if (player.age > 50) {
+        player.health -= random(0,5);
+    }
+
+    randomEvent();
+
+    checkCareer();
+
+    if (player.health <= 0) {
+        player.health = 0;
+        player.alive = false;
+
+        addEvent(
+            `<strong>💀 Fim da vida:</strong> 
+            ${player.name} faleceu aos ${player.age} anos.`
+        );
+    }
+
+    player.health = clamp(player.health);
+    player.happiness = clamp(player.happiness);
+
+    update();
+    saveGame();
+}
+
+function checkCareer() {
+
+    if (player.age === 6) {
+        addEvent("🏫 Você começou a frequentar a escola.");
+    }
+
+    if (player.age === 18) {
+
+        addEvent(
+            "🎓 Você terminou o ensino médio e agora pode procurar uma profissão."
+        );
+
+        player.job = "Desempregado";
+    }
+
+    if (player.age >= 18 && player.job === "Desempregado") {
+
+        const possible = jobs.filter(
+            j => player.age >= j.minAge
+        );
+
+        if (possible.length > 0 && Math.random() < .35) {
+
+            const job =
+                possible[random(0, possible.length - 1)];
+
+            player.job = job.name;
+            player.salary = job.salary;
+
+            addEvent(
+                `💼 Você conseguiu um emprego como 
+                <strong>${job.name}</strong>, ganhando 
+                R$ ${job.salary.toLocaleString("pt-BR")} por ano.`
+            );
+        }
+    }
+}
+
+function study() {
+
+    if (!player.alive) return;
+
+    if (player.age < 5) {
+        addEvent("👶 Você é muito jovem para estudar.");
+        return;
+    }
+
+    player.smarts += random(2,7);
+    player.happiness -= random(1,4);
+
+    player.smarts = clamp(player.smarts);
+
+    addEvent(
+        `📚 Você estudou bastante. Inteligência: 
+        <strong>${player.smarts}%</strong>.`
+    );
+
+    update();
+    saveGame();
+}
+
+function work() {
+
+    if (!player.alive) return;
+
+    if (player.age < 16) {
+        addEvent("🚫 Você ainda é muito jovem para trabalhar.");
+        return;
+    }
+
+    if (player.job === "Estudante") {
+        player.job = "Trabalhador";
+        player.salary = 12000;
+    }
+
+    const earned = Math.floor(player.salary / 12);
+
+    player.money += earned;
+    player.happiness -= random(0,3);
+
+    addEvent(
+        `💼 Você trabalhou e ganhou 
+        <strong>R$ ${earned.toLocaleString("pt-BR")}</strong>.`
+    );
+
+    update();
+    saveGame();
+}
+
+function exercise() {
+
+    if (!player.alive) return;
+
+    player.health += random(3,8);
+    player.happiness += random(1,4);
+
+    player.health = clamp(player.health);
+    player.happiness = clamp(player.happiness);
+
+    addEvent(
+        "🏃 Você fez exercícios e se sentiu melhor."
+    );
+
+    update();
+    saveGame();
+}
+
+function relax() {
+
+    if (!player.alive) return;
+
+    player.happiness += random(5,12);
+    player.money -= random(0,100);
+
+    player.happiness = clamp(player.happiness);
+
+    addEvent(
+        "🎮 Você tirou um tempo para relaxar."
+    );
+
+    update();
+    saveGame();
+}
+
+function relationship() {
+
+    if (!player.alive) return;
+
+    if (player.age < 16) {
+        addEvent("❤️ Você ainda é jovem para esse tipo de relacionamento.");
+        return;
+    }
+
+    const events = [
+        "❤️ Você conheceu alguém especial.",
+        "💔 Seu relacionamento terminou.",
+        "💕 Você começou um novo relacionamento.",
+        "💍 Você decidiu morar junto com seu parceiro.",
+        "🥰 Você teve um encontro incrível."
+    ];
+
+    const event =
+        events[random(0, events.length - 1)];
+
+    player.happiness += random(-5,10);
+
+    player.happiness = clamp(player.happiness);
+
+    addEvent(event);
+
+    update();
+    saveGame();
+}
+
+function medical() {
+
+    if (!player.alive) return;
+
+    const cost = 500;
+
+    if (player.money < cost) {
+
+        addEvent(
+            "🏥 Você não tem dinheiro suficiente para pagar uma consulta."
+        );
+
+        return;
+    }
+
+    player.money -= cost;
+    player.health += random(8,18);
+
+    player.health = clamp(player.health);
+
+    addEvent(
+        `🏥 Você foi ao médico e recuperou sua saúde. 
+        Custo: R$ ${cost}.`
+    );
+
+    update();
+    saveGame();
+}
+
+function randomEvent() {
+
+    if (Math.random() > .45) return;
+
+    const events = [
+
+        {
+            text: "🎁 Você encontrou R$ 200 na rua.",
+            money: 200
+        },
+
+        {
+            text: "📱 Você comprou um celular novo.",
+            money: -1000
+        },
+
+        {
+            text: "🎉 Você ganhou um prêmio inesperado!",
+            money: 3000
+        },
+
+        {
+            text: "🤒 Você ficou doente.",
+            health: -12
+        },
+
+        {
+            text: "🍀 Você teve um dia de muita sorte!",
+            happiness: 10
+        },
+
+        {
+            text: "😞 Um problema pessoal deixou você triste.",
+            happiness: -12
+        },
+
+        {
+            text: "💼 Uma oportunidade profissional apareceu.",
+            happiness: 8
+        }
+
+    ];
+
+    const e =
+        events[random(0, events.length - 1)];
+
+    if (e.money) {
+        player.money += e.money;
+    }
+
+    if (e.health) {
+        player.health += e.health;
+    }
+
+    if (e.happiness) {
+        player.happiness += e.happiness;
+    }
+
+    player.health = clamp(player.health);
+    player.happiness = clamp(player.happiness);
+
+    addEvent(e.text);
+}
+
+function addEvent(text) {
+
+    const log = document.getElementById("eventLog");
+
+    const div = document.createElement("div");
+
+    div.className = "event";
+
+    div.innerHTML =
+        `<small>${new Date().toLocaleTimeString()}</small><br>${text}`;
+
+    log.prepend(div);
+}
+
+function update() {
+
+    document.getElementById("name").textContent =
+        player.name;
+
+    document.getElementById("description").textContent =
+        `${player.age} anos • ${player.country}`;
+
+    document.getElementById("age").textContent =
+        player.age;
+
+    document.getElementById("health").textContent =
+        `${player.health}%`;
+
+    document.getElementById("happiness").textContent =
+        `${player.happiness}%`;
+
+    document.getElementById("smarts").textContent =
+        `${player.smarts}%`;
+
+    document.getElementById("money").textContent =
+        "R$ " + player.money.toLocaleString("pt-BR");
+
+    document.getElementById("job").textContent =
+        player.job;
+
+    document.getElementById("career").textContent =
+        player.job;
+
+    document.getElementById("salary").textContent =
+        "R$ " + player.salary.toLocaleString("pt-BR");
+
+    document.getElementById("healthBar").style.width =
+        player.health + "%";
+
+    document.getElementById("happyBar").style.width =
+        player.happiness + "%";
+
+    document.getElementById("smartBar").style.width =
+        player.smarts + "%";
+
+    // Avatar muda conforme a idade
+    let avatar = "👶";
+
+    if (player.age >= 5) avatar = "🧒";
+    if (player.age >= 13) avatar = "🧑";
+    if (player.age >= 20) avatar = "👨";
+    if (player.age >= 60) avatar = "👴";
+
+    document.getElementById("avatar").textContent =
+        avatar;
+}
+
+function saveGame() {
+    localStorage.setItem(
+        "lifestory-save",
+        JSON.stringify(player)
+    );
+}
+
+function loadGame() {
+
+    const saved =
+        localStorage.getItem("lifestory-save");
+
+    if (!saved) {
+        alert("Nenhum jogo salvo encontrado.");
+        return;
+    }
+
+    player = JSON.parse(saved);
+
+    document.getElementById("startScreen").style.display =
+        "none";
+
+    document.getElementById("game").style.display =
+        "block";
+
+    document.getElementById("eventLog").innerHTML = "";
+
+    addEvent("💾 Jogo carregado com sucesso.");
+
+    update();
+}
+
+function newLife() {
+
+    if (!confirm("Tem certeza que deseja começar uma nova vida?")) {
+        return;
+    }
+
+    localStorage.removeItem("lifestory-save");
+
+    document.getElementById("game").style.display = "none";
+    document.getElementById("startScreen").style.display = "block";
+}
+
+function random(min, max) {
+    return Math.floor(
+        Math.random() * (max - min + 1)
+    ) + min;
+}
+
+function clamp(value) {
+    return Math.max(0, Math.min(100, value));
+}
+
+</script>
+
+</body>
+</html>
